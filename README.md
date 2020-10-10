@@ -64,7 +64,7 @@ $ curl -sSx socks5h://127.0.0.1:1080 http://ifconfig.co
 - Then launching curl with client-IP address query through the proxy.
 - This query was sent through your server with server-v2ray running.
 - You should get the public IP address of your server with server-v2ray running if all good.
-- Please have a look over the sibling project [proxy-v2ray](https://github.com/samuelhbne/vpn-launchpad/tree/master/proxy-v2ray) for more details.
+- Please have a look over the sibling project [proxy-v2ray](https://github.com/samuelhbne/proxy-v2ray) for more details.
 
 ## How to stop and remove the running container
 
