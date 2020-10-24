@@ -9,7 +9,7 @@ usage() {
 	echo "    -k|--hook <hook-url>      [Optional] URL to be hit before server execution, for DDNS update or notification"
 }
 
-TEMP=`getopt -o u:p:l:a: --long uuid:,port:,level:,alterid: -n "$0" -- $@`
+TEMP=`getopt -o u:p:l:a:k: --long uuid:,port:,level:,alterid:hook: -n "$0" -- $@`
 if [ $? != 0 ] ; then usage; exit 1 ; fi
 
 eval set -- "$TEMP"
@@ -29,6 +29,10 @@ while true ; do
 			;;
 		-a|--alterid)
 			ALTERID="$2"
+			shift 2
+			;;
+		-k|--hook)
+			HOOKURL="$2"
 			shift 2
 			;;
 		--)
