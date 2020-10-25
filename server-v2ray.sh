@@ -39,4 +39,20 @@ done
 
 . $DIR/server-$SVCID.env
 
-docker run --restart unless-stopped --name $CTNNAME -p $V2RAYPORT:10086 -d $IMGNAME:$TARGET -p 10086 -u $V2RAYUUID -l $V2RAYLEVEL -a $V2RAYAID
+echo "Starting server-v2ray..."
+docker run --name $CTNNAME -p $V2RAYPORT:10086 -d $IMGNAME:$TARGET \
+	-p 10086 -u $V2RAYUUID -l $V2RAYLEVEL -a $V2RAYAID
+echo
+
+sleep 5
+
+CNT=`docker ps|grep $IMGNAME:$TARGET|grep $CTNNAME -c`
+
+if [ $CNT > 0 ]; then
+	echo "$CTNNAME started."
+	echo "Done"
+	exit 0
+else
+	echo "Starting $CTNNAME failed. Check detail with \"docker logs $CTNNAME\""
+	exit 252
+fi
