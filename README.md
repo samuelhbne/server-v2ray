@@ -2,7 +2,7 @@
 
 Yet another unofficial [v2ray](https://github.com/v2ray) server container with x86 and arm/arm64 (Raspberry Pi) support.
 
-![docker-build](https://github.com/samuelhbne/server-v2ray/workflows/docker-build/badge.svg)
+![docker-build](https://github.com/samuelhbne/server-v2ray/workflows/docker-buildx-latest/badge.svg)
 
 ## [Optional] How to build server-v2ray docker image
 
