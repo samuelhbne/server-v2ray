@@ -5,7 +5,7 @@ on:
     branches: dev
 
 jobs:
-  multi-arch-latest:
+  multi-arch-latest-dev:
     runs-on: ubuntu-latest
     steps:
       -
