@@ -1,15 +1,19 @@
 #!/bin/bash
 
 usage() {
-	echo "server-v2ray -u|--uuid <vmess-uuid> [-p|--port <port-num>] [-l|--level <level>] [-a|--alterid <alterid>] [-k|--hook hook-url]"
+	echo "server-v2ray -u|--uuid <vmess-uuid> [-p|--port <port-num>] [-l|--level <level>] [-a|--alterid <alterid>] [-k|--hook hook-url] [--wp <websocket-path>] [--nginx <domain-name>] [--nginx-port <port-num>] [--no-ssl]"
 	echo "    -u|--uuid <vmess-uuid>    Vmess UUID for initial V2ray connection"
-	echo "    -p|--port <port-num>      [Optional] Port number for incoming V2ray connection, default 10086"
+	echo "    -p|--port <port-num>      [Optional] Port number for V2ray connection, default 10086"
 	echo "    -l|--level <level>        [Optional] Level number for V2ray service access, default 0"
 	echo "    -a|--alterid <alterid>    [Optional] AlterID number for V2ray service access, default 16"
 	echo "    -k|--hook <hook-url>      [Optional] URL to be hit before server execution, for DDNS update or notification"
+	echo "    --wp <websocket-path>     [Optional] Enable websocket with websocket-path setting, e.g. '/wsocket'. default disable"
+	echo "    --nginx <domain-name>     [Optional] Enable ngnix proxy-front with specific domain-name, default disable, must be applied with --wp enabled"
+	echo "    --nginx-port <port-num>   [Optional] Enable ngnix for domain name hosting, default 8443, must be applied with --nginx enabled"
+	echo "    --no-ssl                  [Optional] Disable ngnix SSL support to accelerate CDN connection, must be applied with --nginx enabled"
 }
 
-TEMP=`getopt -o u:p:l:a:k: --long uuid:,port:,level:,alterid:hook: -n "$0" -- $@`
+TEMP=`getopt -o u:p:l:a:k: --long uuid:,port:,level:,alterid:hook:wp:nginx:nginx-port:nginx-ssl -n "$0" -- $@`
 if [ $? != 0 ] ; then usage; exit 1 ; fi
 
 eval set -- "$TEMP"
@@ -34,6 +38,22 @@ while true ; do
 		-k|--hook)
 			HOOKURL="$2"
 			shift 2
+			;;
+		--wp)
+			WSPATH="$2"
+			shift 2
+			;;
+		--nginx)
+			DOMAIN="$2"
+			shift 2
+			;;
+		--nginx-port)
+			NGPORT="$2"
+			shift 2
+			;;
+		--nginx-ssl)
+			NGSSL="true"
+			shift 1
 			;;
 		--)
 			shift
