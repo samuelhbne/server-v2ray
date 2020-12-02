@@ -10,7 +10,7 @@ usage() {
 	echo "    --wp <websocket-path>     [Optional] Enable websocket with websocket-path setting, e.g. '/wsocket'. default disable"
 	echo "    --nginx <domain-name>     [Optional] Enable ngnix proxy-front with specific domain-name, default disable, must be applied with --wp enabled"
 	echo "    --nginx-port <port-num>   [Optional] Enable ngnix for domain name hosting, default 8443, must be applied with --nginx enabled"
-	echo "    --no-ssl                  [Optional] Disable ngnix SSL support to accelerate CDN connection, must be applied with --nginx enabled"
+	echo "    --no-ssl                  [Optional] Disable ngnix SSL support to accelerate CDN connection, must be applied with --nginx enabled."
 }
 
 TEMP=`getopt -o u:p:l:a:k: --long uuid:,port:,level:,alterid:hook:wp:nginx:nginx-port:nginx-ssl -n "$0" -- $@`
