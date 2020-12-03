@@ -30,10 +30,10 @@ server-v2ray -u|--uuid <vmess-uuid> [-p|--port <port-num>] [-l|--level <level>] 
     --wp <websocket-path>     [Optional] Enable websocket with given websocket-path, e.g. '/wsocket'
     --nginx <domain-name>     [Optional] Enable Ngnix frontend with given domain-name, must be applied with --wp enabled
     --nginx-port <port-num>   [Optional] Ngnix listening port, default 443, must be applied with --nginx enabled
-    --share-cert <cert-path>  [Optional] Waiting for cert populating in given path instead of requesting
+    --cert <cert-path>        [Optional] Reading TLS cert and key from given path instead of requesting
     --no-ssl                  [Optional] Disable Ngnix SSL support for CDN optimisation, must be applied with --nginx enabled
 
-$ docker run --name server-v2ray -p 8443:443 -v /home/ubuntu/mydomain.duckdns.org:/opt/mydomain.duckdns.org -d samuelhbne/server-v2ray:amd64 -u bec24d96-410f-4723-8b3b-46987a1d9ed8 -p 10086 -k https://duckdns.org/update/mydomain/c9711c65-db21-4f8c-a790-2c32c93bde8c --wp /wsocket --nginx mydomain.duckdns.org --nginx-port 443 --share-cert /opt/mydomain.duckdns.org
+$ docker run --name server-v2ray -p 8443:443 -v /home/ubuntu/mydomain.duckdns.org:/opt/mydomain.duckdns.org -d samuelhbne/server-v2ray:amd64 -u bec24d96-410f-4723-8b3b-46987a1d9ed8 -p 10086 -k https://duckdns.org/update/mydomain/c9711c65-db21-4f8c-a790-2c32c93bde8c --wp /wsocket --nginx mydomain.duckdns.org --nginx-port 443 --cert /opt/mydomain.duckdns.org
 ...
 ```
 
@@ -43,7 +43,7 @@ $ docker run --name server-v2ray -p 8443:443 -v /home/ubuntu/mydomain.duckdns.or
 - Please replace "8443" with the TCP port number you want to listen.
 - Please replace "bec24d96-410f-4723-8b3b-46987a1d9ed8" with the uuid you want to set for V2ray client auth.
 - Please replace /home/ubuntu/mydomain.duckdns.org with the folder where TLS cert saved.
-- If not pointed by '--share-cert', server-v2ray will request a new TLS cert from Letsencrypt
+- If not appointed by '--cert' option, server-v2ray will request a new TLS cert from Letsencrypt
 - You can optionally assign a HOOK-URL to update the DDNS domain-name pointing to the current server public IP address.
 
 ## How to verify if server-v2ray is running properly

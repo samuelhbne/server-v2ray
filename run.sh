@@ -10,11 +10,11 @@ usage() {
 	echo "    --wp <websocket-path>     [Optional] Enable websocket with given websocket-path, e.g. '/wsocket'"
 	echo "    --nginx <domain-name>     [Optional] Enable Ngnix frontend with given domain-name, must be applied with --wp enabled"
 	echo "    --nginx-port <port-num>   [Optional] Ngnix listening port, default 443, must be applied with --nginx enabled"
-	echo "    --share-cert <cert-path>  [Optional] Waiting for cert populating in given path instead of requesting"
+	echo "    --cert <cert-path>        [Optional] Reading TLS cert and key from given path instead of requesting"
 	echo "    --no-ssl                  [Optional] Disable Ngnix SSL support for CDN optimisation, must be applied with --nginx enabled"
 }
 
-TEMP=`getopt -o u:p:l:a:k: --long uuid:,port:,level:,alterid:,hook:,wp:,nginx:,nginx-port:,share-cert:,no-ssl -n "$0" -- $@`
+TEMP=`getopt -o u:p:l:a:k: --long uuid:,port:,level:,alterid:,hook:,wp:,nginx:,nginx-port:,cert:,no-ssl -n "$0" -- $@`
 if [ $? != 0 ] ; then usage; exit 1 ; fi
 
 eval set -- "$TEMP"
@@ -57,7 +57,7 @@ while true ; do
 			NGPORT="$2"
 			shift 2
 			;;
-		--share-cert)
+		--cert)
 			SHARECERT="$2"
 			shift 2
 			;;
