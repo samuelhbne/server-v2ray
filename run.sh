@@ -1,7 +1,7 @@
 #!/bin/bash
 
 usage() {
-	echo "server-v2ray -u|--uuid <vmess-uuid> [-p|--port <port-num>] [-l|--level <level>] [-a|--alterid <alterid>] [-k|--hook hook-url] [--wp <websocket-path>] [--nginx <domain-name>] [--nginx-port <port-num>] [--no-ssl]"
+	echo "server-v2ray -u|--uuid <vmess-uuid> [-p|--port <port-num>] [-l|--level <level>] [-a|--alterid <alterid>] [-k|--hook hook-url] [--wp <websocket-path>] [--nginx <domain-name>] [--nginx-port <port-num>] [--share-cert <cert-path>] [--no-ssl]"
 	echo "    -u|--uuid <vmess-uuid>    Vmess UUID for initial V2ray connection"
 	echo "    -p|--port <port-num>      [Optional] V2ray listening port, default 10086"
 	echo "    -l|--level <level>        [Optional] Level number for V2ray service access, default 0"
@@ -124,7 +124,7 @@ if [ -n "${NGDOMAIN}" ]; then
 				echo "Cert requesting..."
 				/root/.acme.sh/acme.sh --issue --standalone -d ${NGDOMAIN}
 				((TRY++))
-				if [ ${TRY} >= 3 ]; then
+				if [ "${TRY}" -ge 3 ]; then
 					echo "Requesting cert for ${NGDOMAIN} failed. Check log please."
 					exit 3
 				fi
@@ -150,12 +150,14 @@ if [ -n "${NGDOMAIN}" ]; then
 		TPL="site-non-ssl.conf.tpl"
 	fi
 
+	ESC_CERTPATH=$(printf '%s\n' "$CERTPATH" | sed -e 's/[]\/$*.^[]/\\&/g')
+	ESC_WSPATH=$(printf '%s\n' "$WSPATH" | sed -e 's/[]\/$*.^[]/\\&/g')
 	cat ${TPL} \
-		| sed "s/CERTPATH/${CERTPATH}/g" \
+		| sed "s/CERTPATH/${ESC_CERTPATH}/g" \
 		| sed "s/NGDOMAIN/${NGDOMAIN}/g" \
 		| sed "s/NGPORT/${NGPORT}/g" \
 		| sed "s/VPORT/${VPORT}/g" \
-		| sed "s/WSPATH/\\${WSPATH}/g" \
+		| sed "s/WSPATH/${ESC_WSPATH}/g" \
 		>v2site.conf
 
 fi
