@@ -1,13 +1,12 @@
 server {
   listen NGPORT ssl;
   listen [::]:NGPORT ssl;
-  ssl on;
-  ssl_certificate       /root/.acme.sh/NGDOMAIN/fullchain.cer;
-  ssl_certificate_key   /root/.acme.sh/NGDOMAIN/NGDOMAIN.key;
+  ssl_certificate       CERTPATH/fullchain.cer;
+  ssl_certificate_key   CERTPATH/NGDOMAIN.key;
   ssl_protocols         TLSv1 TLSv1.1 TLSv1.2;
   ssl_ciphers           HIGH:!aNULL:!MD5;
   server_name           NGDOMAIN;
-    location /WSPATH {
+    location WSPATH {
       if ($http_upgrade != "websocket") {
           return 404;
       }

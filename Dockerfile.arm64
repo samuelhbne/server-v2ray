@@ -8,20 +8,20 @@ RUN apk add --no-cache bash git build-base \
 
 WORKDIR /go/src/v2ray.com/core
 RUN git clone --progress https://github.com/v2fly/v2ray-core.git . && \
-    bash ./release/user-package.sh nosource arm64 codename=$(git describe --tags) buildname=v2ray-vlp abpathtgz=/tmp/v2ray.tgz
+    bash ./release/user-package.sh nosource amd64 codename=$(git describe --tags) buildname=v2ray-vlp abpathtgz=/tmp/v2ray.tgz
 
 
-FROM arm64v8/golang:1.15-alpine
+FROM arm64v8/alpine:3.12
 
 RUN mkdir -p /usr/bin/v2ray/
 COPY --from=builder /tmp/v2ray.tgz /tmp
 RUN tar xvfz /tmp/v2ray.tgz -C /usr/bin/v2ray
 
-RUN apk update && apk add bash openssl jq \
-	curl bind-tools whois \
-	dnscrypt-proxy ca-certificates \
-	&& update-ca-certificates
+RUN apk update && apk add bash nginx openssl curl socat jq
+RUN curl -sSL https://get.acme.sh | sh
 
+COPY site-non-ssl.conf.tpl /etc/nginx/conf.d/
+COPY site-ssl.conf.tpl /etc/nginx/conf.d/
 ADD run.sh /run.sh
 RUN chmod 755 /*.sh
 

@@ -17,7 +17,7 @@ RUN mkdir -p /usr/bin/v2ray/
 COPY --from=builder /tmp/v2ray.tgz /tmp
 RUN tar xvfz /tmp/v2ray.tgz -C /usr/bin/v2ray
 
-RUN apk update && apk add bash nginx openssl curl jq
+RUN apk update && apk add bash nginx openssl curl socat jq
 RUN curl -sSL https://get.acme.sh | sh
 
 COPY site-non-ssl.conf.tpl /etc/nginx/conf.d/

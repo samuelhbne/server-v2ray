@@ -2,7 +2,7 @@ server {
   listen NGPORT;
   listen [::]:NGPORT;
   server_name           NGDOMAIN;
-    location /WSPATH {
+    location WSPATH {
       if ($http_upgrade != "websocket") {
           return 404;
       }
