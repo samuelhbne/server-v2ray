@@ -3,14 +3,14 @@
 usage() {
 	echo "server-v2ray -u|--uuid <vmess-uuid> [-p|--port <port-num>] [-l|--level <level>] [-a|--alterid <alterid>] [-k|--hook hook-url] [--wp <websocket-path>] [--nginx <domain-name>] [--nginx-port <port-num>] [--no-ssl]"
 	echo "    -u|--uuid <vmess-uuid>    Vmess UUID for initial V2ray connection"
-	echo "    -p|--port <port-num>      [Optional] Port number for V2ray connection, default 10086"
+	echo "    -p|--port <port-num>      [Optional] V2ray listening port, default 10086"
 	echo "    -l|--level <level>        [Optional] Level number for V2ray service access, default 0"
 	echo "    -a|--alterid <alterid>    [Optional] AlterID number for V2ray service access, default 16"
 	echo "    -k|--hook <hook-url>      [Optional] URL to be hit before server execution, for DDNS update or notification"
 	echo "    --wp <websocket-path>     [Optional] Enable websocket with websocket-path setting, e.g. '/wsocket'. default disable"
-	echo "    --nginx <domain-name>     [Optional] Enable ngnix frontend with specific domain-name, default disable, must be applied with --wp enabled"
-	echo "    --nginx-port <port-num>   [Optional] Enable ngnix for domain name hosting, default 8443, must be applied with --nginx enabled"
-	echo "    --no-ssl                  [Optional] Disable ngnix SSL support to accelerate CDN connection, must be applied with --nginx enabled"
+	echo "    --nginx <domain-name>     [Optional] Enable Ngnix frontend with given domain-name, must be applied with --wp enabled"
+	echo "    --nginx-port <port-num>   [Optional] Ngnix listening port, default 8443, must be applied with --nginx enabled"
+	echo "    --no-ssl                  [Optional] Disable Ngnix SSL support for CDN optimisation, must be applied with --nginx enabled"
 }
 
 TEMP=`getopt -o u:p:l:a:k: --long uuid:,port:,level:,alterid:,hook:,wp:,nginx:,nginx-port:,nginx-ssl -n "$0" -- $@`
