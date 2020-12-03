@@ -7,7 +7,7 @@ usage() {
 	echo "    -l|--level <level>        [Optional] Level number for V2ray service access, default 0"
 	echo "    -a|--alterid <alterid>    [Optional] AlterID number for V2ray service access, default 16"
 	echo "    -k|--hook <hook-url>      [Optional] URL to be hit before server execution, for DDNS update or notification"
-	echo "    --wp <websocket-path>     [Optional] Enable websocket with websocket-path setting, e.g. '/wsocket'. default disable"
+	echo "    --wp <websocket-path>     [Optional] Enable websocket with given websocket-path, e.g. '/wsocket'. default disable"
 	echo "    --nginx <domain-name>     [Optional] Enable Ngnix frontend with given domain-name, must be applied with --wp enabled"
 	echo "    --nginx-port <port-num>   [Optional] Ngnix listening port, default 443, must be applied with --nginx enabled"
 	echo "    --share-cert <cert-path>  [Optional] Waiting for cert populating in given path instead of requesting. default disable"
