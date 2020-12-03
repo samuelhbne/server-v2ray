@@ -8,12 +8,12 @@ usage() {
 	echo "    -a|--alterid <alterid>    [Optional] AlterID number for V2ray service access, default 16"
 	echo "    -k|--hook <hook-url>      [Optional] URL to be hit before server execution, for DDNS update or notification"
 	echo "    --wp <websocket-path>     [Optional] Enable websocket with websocket-path setting, e.g. '/wsocket'. default disable"
-	echo "    --nginx <domain-name>     [Optional] Enable ngnix proxy-front with specific domain-name, default disable, must be applied with --wp enabled"
+	echo "    --nginx <domain-name>     [Optional] Enable ngnix frontend with specific domain-name, default disable, must be applied with --wp enabled"
 	echo "    --nginx-port <port-num>   [Optional] Enable ngnix for domain name hosting, default 8443, must be applied with --nginx enabled"
-	echo "    --no-ssl                  [Optional] Disable ngnix SSL support to accelerate CDN connection, must be applied with --nginx enabled."
+	echo "    --no-ssl                  [Optional] Disable ngnix SSL support to accelerate CDN connection, must be applied with --nginx enabled"
 }
 
-TEMP=`getopt -o u:p:l:a:k: --long uuid:,port:,level:,alterid:hook:wp:nginx:nginx-port:nginx-ssl -n "$0" -- $@`
+TEMP=`getopt -o u:p:l:a:k: --long uuid:,port:,level:,alterid:,hook:,wp:,nginx:,nginx-port:,nginx-ssl -n "$0" -- $@`
 if [ $? != 0 ] ; then usage; exit 1 ; fi
 
 eval set -- "$TEMP"
@@ -24,7 +24,7 @@ while true ; do
 			shift 2
 			;;
 		-p|--port)
-			PORT="$2"
+			VPORT="$2"
 			shift 2
 			;;
 		-l|--level)
@@ -44,15 +44,15 @@ while true ; do
 			shift 2
 			;;
 		--nginx)
-			DOMAIN="$2"
+			NGDOMAIN="$2"
 			shift 2
 			;;
 		--nginx-port)
 			NGPORT="$2"
 			shift 2
 			;;
-		--nginx-ssl)
-			NGSSL="true"
+		--no-ssl)
+			NOSSL="true"
 			shift 1
 			;;
 		--)
@@ -71,8 +71,8 @@ if [ -z "${UUID}" ]; then
 	exit 1
 fi
 
-if [ -z "${PORT}" ]; then
-	PORT=10086
+if [ -z "${VPORT}" ]; then
+	VPORT=10086
 fi
 
 if [ -z "${ALTERID}" ]; then
@@ -83,15 +83,66 @@ if [ -z "${LEVEL}" ]; then
 	LEVEL=0
 fi
 
+if [ -z "${NGPORT}" ]; then
+	NGPORT=8443
+fi
+
 if [ -n "${HOOKURL}" ]; then
 	curl -sSL "${HOOKURL}"
 	echo
 fi
 
+if [ -n "${NGDOMAIN}" ]; then
+	if [ -z "${WSPATH}" ]; then
+		echo "'--wp' option is missing, which is necessary for nginx frontend running. Abrot."
+		exit 1
+	fi
+
+	if [ -z "${NOSSL}" ]; then
+		TRY=0
+		while [ ! -f "/root/.acme.sh/${NGDOMAIN}/fullchain.cer" ]
+		do
+			/root/.acme.sh/acme.sh --issue --standalone -d ${NGDOMAIN}
+			((TRY++))
+			if [ $TRY >= 3 ]; then
+				echo "Obtian cert for ${NGDOMAIN} failed. Check log please."
+				exit 3
+			fi
+		done
+	fi
+
+	sed -i 's/^user nginx;$/user root;/g' /etc/nginx/nginx.conf
+	mkdir -p /run/nginx/
+
+	cd /etc/nginx/conf.d/
+	mv default.conf default.conf.disable
+	if [ -z "${NOSSL}" ]; then
+		TPL="site-ssl.conf.tpl"
+	else
+		TPL="site-non-ssl.conf.tpl"
+	fi
+	cat ${TPL} \
+		| sed 's/NGDOMAIN/${NGDOMAIN}/g' \
+		| sed 's/NGPORT/${NGPORT}/g' \
+		| sed 's/VPORT/${VPORT}/g' \
+		| sed 's/WSPATH/${WSPATH}/g' \
+		>v2site.conf
+fi
+
 cd /tmp
-cp /usr/bin/v2ray/vpoint_vmess_freedom.json vvf.json
-jq "(.inbounds[] | select( .protocol == \"vmess\") | .port) |= \"${PORT}\"" vvf.json >vvf.json.1
-jq "(.inbounds[] | select( .protocol == \"vmess\") | .settings.clients[0].id) |= \"${UUID}\"" vvf.json.1 >vvf.json.2
-jq "(.inbounds[] | select( .protocol == \"vmess\") | .settings.clients[0].level) |= ${LEVEL}" vvf.json.2 >vvf.json.3
-jq "(.inbounds[] | select( .protocol == \"vmess\") | .settings.clients[0].alterId) |= ${ALTERID}" vvf.json.3 >server.json
+cat /usr/bin/v2ray/vpoint_vmess_freedom.json \
+	| jq "(.inbounds[] | select( .protocol == \"vmess\") | .port) |= \"${VPORT}\"" - \
+	| jq "(.inbounds[] | select( .protocol == \"vmess\") | .settings.clients[0].id) |= \"${UUID}\"" - \
+	| jq "(.inbounds[] | select( .protocol == \"vmess\") | .settings.clients[0].level) |= ${LEVEL}" - \
+	| jq "(.inbounds[] | select( .protocol == \"vmess\") | .settings.clients[0].alterId) |= ${ALTERID}" - \
+	>server.json
+
+if [ -n "${WSPATH}" ]; then
+	cat server.json \
+		| jq "(.inbounds[] | select( .protocol == \"vmess\")) +=  {\"streamSettings\":{\"network\":\"ws\",\"wsSettings\":{\"path\":\"${WSPATH}\"}}}" - \
+		>ws.json
+	mv ws.json server.json
+fi
+
+nginx
 exec /usr/bin/v2ray/v2ray -config=/tmp/server.json

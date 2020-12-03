@@ -11,17 +11,17 @@ RUN git clone --progress https://github.com/v2fly/v2ray-core.git . && \
     bash ./release/user-package.sh nosource amd64 codename=$(git describe --tags) buildname=v2ray-vlp abpathtgz=/tmp/v2ray.tgz
 
 
-FROM golang:1.15-alpine
+FROM alpine:3.12
 
 RUN mkdir -p /usr/bin/v2ray/
 COPY --from=builder /tmp/v2ray.tgz /tmp
 RUN tar xvfz /tmp/v2ray.tgz -C /usr/bin/v2ray
 
-RUN apk update && apk add bash nginx openssl jq \
-	curl bind-tools whois \
-	dnscrypt-proxy ca-certificates \
-	&& update-ca-certificates
+RUN apk update && apk add bash nginx openssl curl jq
+RUN curl -sSL https://get.acme.sh | sh
 
+ADD site-non-ssl.conf.tpl /etc/nginx/conf.d/
+ADD site-ssl.conf.tpl /etc/nginx/conf.d/
 ADD run.sh /run.sh
 RUN chmod 755 /*.sh
 
