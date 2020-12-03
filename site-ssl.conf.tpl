@@ -7,7 +7,7 @@ server {
   ssl_protocols         TLSv1 TLSv1.1 TLSv1.2;
   ssl_ciphers           HIGH:!aNULL:!MD5;
   server_name           NGDOMAIN;
-    location /websocket {
+    location /WSPATH {
       if ($http_upgrade != "websocket") {
           return 404;
       }

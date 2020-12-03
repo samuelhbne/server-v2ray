@@ -5,3 +5,4 @@
 !Dockerfile.*
 !status.sh
 !run.sh
+!*.tpl
