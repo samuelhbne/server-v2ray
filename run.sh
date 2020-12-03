@@ -46,7 +46,7 @@ while true ; do
 				shift 2
 			else
 				echo "Websocket path must be 1-16 aplhabets, numbers, '-' or '_' started with '/'"
-				exit
+				exit 1
 			fi
 			;;
 		--nginx)
