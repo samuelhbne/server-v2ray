@@ -8,7 +8,7 @@ RUN apk add --no-cache bash git build-base \
 
 WORKDIR /go/src/v2ray.com/core
 RUN git clone --progress https://github.com/v2fly/v2ray-core.git . && \
-    bash ./release/user-package.sh nosource amd64 codename=$(git describe --tags) buildname=v2ray-vlp abpathtgz=/tmp/v2ray.tgz
+    bash ./release/user-package.sh nosource arm codename=$(git describe --tags) buildname=v2ray-vlp abpathtgz=/tmp/v2ray.tgz
 
 
 FROM arm32v6/alpine:3.12
