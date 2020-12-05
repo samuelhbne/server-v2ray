@@ -9,13 +9,16 @@ RUN apk add --no-cache bash git build-base \
 WORKDIR /go/src/v2ray.com/core
 RUN git clone --progress https://github.com/v2fly/v2ray-core.git . && \
     bash ./release/user-package.sh nosource codename=$(git describe --tags) buildname=v2ray-vlp abpathtgz=/tmp/v2ray.tgz
+RUN mkdir -p /tmp/v2ray && tar xvf /tmp/v2ray.tgz -C /tmp/v2ray/
 
 
 FROM arm32v6/alpine:3.12
 
 RUN mkdir -p /usr/bin/v2ray/
-COPY --from=builder /tmp/v2ray.tgz /tmp
-RUN tar xvfz /tmp/v2ray.tgz -C /usr/bin/v2ray
+COPY --from=builder /tmp/v2ray/ /etc/v2ray/
+
+RUN mv /etc/v2ray/v2ray /usr/local/bin/
+RUN mv /etc/v2ray/v2ctl /usr/local/bin/
 
 RUN apk update && apk add bash nginx openssl curl socat jq
 RUN curl -sSL https://get.acme.sh | sh

@@ -162,8 +162,8 @@ if [ -n "${NGDOMAIN}" ]; then
 
 fi
 
-cd /tmp
-cat /usr/bin/v2ray/vpoint_vmess_freedom.json \
+cd /etc/v2ray
+cat vpoint_vmess_freedom.json \
     | jq "(.inbounds[] | select( .protocol == \"vmess\") | .port) |= \"${VPORT}\"" - \
     | jq "(.inbounds[] | select( .protocol == \"vmess\") | .settings.clients[0].id) |= \"${UUID}\"" - \
     | jq "(.inbounds[] | select( .protocol == \"vmess\") | .settings.clients[0].level) |= ${LEVEL}" - \
@@ -180,4 +180,4 @@ fi
 if [ -n "${NGDOMAIN}" ]; then
     nginx
 fi
-exec /usr/bin/v2ray/v2ray -config=/tmp/server.json
+exec /usr/local/bin/v2ray -config=/etc/v2ray/server.json
