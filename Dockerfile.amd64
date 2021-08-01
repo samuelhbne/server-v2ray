@@ -24,7 +24,8 @@ RUN mv /etc/v2ray/geoip.dat /usr/local/bin/
 RUN mv /etc/v2ray/geosite.dat /usr/local/bin/
 
 RUN apk update && apk add bash nginx openssl curl socat jq
-RUN curl -sSL https://get.acme.sh | sh
+RUN cd /root; curl -sSL "https://github.com/acmesh-official/acme.sh/archive/refs/tags/2.9.0.tar.gz"|tar zxvf -
+RUN cd /root; mv acme.sh-2.9.0 .acme.sh
 
 COPY site-non-ssl.conf.tpl /etc/nginx/conf.d/
 COPY site-ssl.conf.tpl /etc/nginx/conf.d/
