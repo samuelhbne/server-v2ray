@@ -13,7 +13,7 @@ RUN git clone --progress https://github.com/v2fly/v2ray-core.git . && \
 RUN mkdir -p /tmp/v2ray && tar xvf /tmp/v2ray.tgz -C /tmp/v2ray/
 
 
-FROM alpine:3
+FROM alpine:3.14
 
 RUN mkdir -p /usr/bin/v2ray/
 COPY --from=builder /tmp/v2ray/ /etc/v2ray/
