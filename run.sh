@@ -138,9 +138,9 @@ if [ -n "${NGDOMAIN}" ]; then
     sed -i 's/^user nginx;$/user root;/g' /etc/nginx/nginx.conf
     mkdir -p /run/nginx/
 
-    cd /etc/nginx/conf.d/
+    cd /etc/nginx/http.d/
 
-    if [ -f /etc/nginx/conf.d/default.conf ]; then
+    if [ -f /etc/nginx/http.d/default.conf ]; then
         mv default.conf default.conf.disable
     fi
 
