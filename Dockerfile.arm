@@ -27,8 +27,8 @@ RUN apk update && apk add bash nginx openssl curl socat jq
 RUN cd /root; curl -sSL "https://github.com/acmesh-official/acme.sh/archive/refs/tags/2.9.0.tar.gz"|tar zxvf -
 RUN cd /root; mv acme.sh-2.9.0 .acme.sh
 
-COPY site-non-ssl.conf.tpl /etc/nginx/conf.d/
-COPY site-ssl.conf.tpl /etc/nginx/conf.d/
+COPY site-non-ssl.conf.tpl /etc/nginx/http.d/
+COPY site-ssl.conf.tpl /etc/nginx/http.d/
 ADD run.sh /run.sh
 RUN chmod 755 /*.sh
 
